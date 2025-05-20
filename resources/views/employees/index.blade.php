@@ -14,64 +14,28 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
 
 <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
-        <a href="{{ url('/') }}" class="block text-2xl font-bold text-gray-800 dark:text-white mb-6">
-            Sysinn HRM
-        </a>
-
-        <nav class="space-y-2">
-            {{-- Show to authenticated employee --}}
-            @auth('employee')
-                <a href="{{ route('user-tasks.index') }}"
-                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    My Tasks
-                </a>
-
-                <span class="block text-gray-600 dark:text-gray-300">
-                    {{ Auth::guard('employee')->user()->first_name }}
-                </span>
-            @endauth
-
-            {{-- Show to authenticated admin or super admin --}}
-            @auth
-                @php
-                    $roleId = Auth::user()->role_id ?? null;
-                @endphp
-
-                @if($roleId === 1 || $roleId === 2)
-                    
-                    <a href="{{ route('auth.dashboard') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Dashboard
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Users
-                    </a>
-                    <a href="{{ route('employees.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Employees
-                    </a>
-                    <a href="{{ route('employee-daily-tasks.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Tasks
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Settings
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                         Profile
-                    </a>
-                @endif
-
-                <a href="{{ route('logout') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Logout
-                </a>
-            @endauth
-        </nav>
-    </aside>
-
+    @include('layouts.sidebar')
     <!-- Main content -->
     <main class="flex-1 p-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Employees</h1>
+            
+
+         
+        <form method="GET" action="{{ route('employees.index') }}" class="mb-4">
+            <div class="flex items-center space-x-2">
+                <input type="text" name="search" value="{{ request('search') }}"
+                    placeholder="Search by name or email"
+                    class="w-full sm:w-64 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                    Search
+                </button>
+            </div>
+        </form>
+<h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Employees</h1>
             <a href="{{ route('employees.create') }}"
                class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
                 Add Employee
@@ -84,6 +48,8 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
                     <tr>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Name</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Email</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Position</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
                     </tr>
                 </thead>
@@ -93,8 +59,14 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 {{ $employee->first_name }} {{ $employee->last_name }}
                             </td>
+                             <td class="px-6 py-4 text-gray-900 dark:text-white">
+                                {{ $employee->position }}
+                            </td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 {{ $employee->email }}
+                            </td>
+                             <td class="px-6 py-4 text-gray-900 dark:text-white">
+                                {{ $employee->hired_at }}
                             </td>
                             <td class="px-6 py-4 space-x-2">
                                 <a href="{{ route('employees.show', $employee) }}"

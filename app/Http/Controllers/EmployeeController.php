@@ -9,10 +9,26 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Department;
 class EmployeeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::all();
-        return view('employees.index', compact('employees'));
+
+          $query = Employee::query();
+
+    if ($request->has('search') && $request->search) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('first_name', 'like', "%$search%")
+              ->orWhere('last_name', 'like', "%$search%")
+              ->orWhere('email', 'like', "%$search%");
+        });
+    }
+
+    $employees = $query->latest()->get(); // Use ->paginate() if you want pagination
+
+    return view('employees.index', compact('employees'));
+
+       // $employees = Employee::all();
+       // return view('employees.index', compact('employees'));
     }
 
     public function create()
@@ -38,24 +54,16 @@ class EmployeeController extends Controller
             // add any other fields you want to validate
         ]);
        if ($request->hasFile('profile_picture')) {
-        // ✅ Ensure the directory exists
-        if (!Storage::exists('public/employees')) {
-            Storage::makeDirectory('public/employees');
+            $path = $request->file('profile_picture')->store('employees', 'public');
+            $validated['profile_picture'] = $path; // e.g., "employees/1726837162.jpg"
         }
 
-        $fileName = time() . '.' . $request->profile_picture->extension();
-        $request->profile_picture->storeAs('public/employees', $fileName);
-        $validated['profile_picture'] = $fileName;
-    }
+        $validated['password'] = Hash::make($validated['password']);
 
-    
-        $validated['password'] = Hash::make($validated['password']); // ✅ Hash the password before storing
-    
         Employee::create($validated);
-    
+
         return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
-    
-    }
+     }
 
     public function show(Employee $employee)
     {
@@ -64,8 +72,8 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee)
     {
-         $employee = Employee::findOrFail($id);
-    $departments = Department::all(); // ✅ Fetch departments
+         $departments = Department::all(); // ✅ Fetch departments
+    return view('employees.edit', compact('employee', 'departments'));
 
         return view('employees.edit', compact('employee'));
     }

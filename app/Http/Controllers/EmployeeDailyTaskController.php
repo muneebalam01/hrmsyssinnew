@@ -5,14 +5,27 @@ namespace App\Http\Controllers;
 use App\Models\EmployeeDailyTask;
 use App\Models\Employee;
 use Illuminate\Http\Request;
+use App\Models\EmployeeTaskDocument;
 
 class EmployeeDailyTaskController extends Controller
 {
     // Display all employee daily tasks
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = EmployeeDailyTask::with('employee')->latest()->get();
-        return view('employee_daily_tasks.index', compact('tasks'));
+       $query = EmployeeDailyTask::with('employee');
+
+    if ($request->has('search') && $request->search !== null) {
+        $search = $request->search;
+
+        $query->whereHas('employee', function ($q) use ($search) {
+            $q->where('first_name', 'like', "%{$search}%")
+              ->orWhere('last_name', 'like', "%{$search}%");
+        })->orWhere('status', 'like', "%{$search}%");
+    }
+
+    $tasks = $query->latest()->get();
+
+    return view('employee_daily_tasks.index', compact('tasks'));
     }
 
     // Show the form to create a new task
@@ -32,14 +45,23 @@ class EmployeeDailyTaskController extends Controller
         'task_description' => 'required|string',
         'priority' => 'required|in:urgent,normal',
         'status' => 'required|in:pending,in_progress,completed',
+        'related_documents.*' => 'file|mimes:pdf,jpg,jpeg,png,docx|max:2048'
         ]);
          $validated['assigned_by'] = auth()->id();
          //dd($validated);
-        EmployeeDailyTask::create($validated);
-        
-       // EmployeeDailyTask::create($request->all());
-        return redirect()->route('employee-daily-tasks.index')->with('success', 'Task created successfully.');
+        $task = EmployeeDailyTask::create($validated);
+       if ($request->hasFile('related_documents')) {
+        foreach ($request->file('related_documents') as $file) {
+            $path = $file->store('task_documents', 'public');
+            EmployeeTaskDocument::create([
+                'employee_daily_task_id' => $task->id,
+                'file_path' => $path,
+            ]);
+        }
     }
+
+    return redirect()->route('employee-daily-tasks.index')->with('success', 'Task created successfully.');
+  }
 
     // Show the form to edit an existing task
     public function edit(EmployeeDailyTask $employee_daily_task)

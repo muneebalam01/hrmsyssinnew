@@ -28,19 +28,7 @@
 
                     
                     <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Dashboard
-                    </a>
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Users
-                    </a>
-                    <a href="{{ route('employees.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Employees
-                    </a>
-                    <a href="{{ route('employee-daily-tasks.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Tasks
-                    </a>
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Settings
+                       {{ Auth::user()->name }}
                     </a>
                 @endif
 

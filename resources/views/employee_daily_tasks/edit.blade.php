@@ -90,6 +90,22 @@
         </div>
      
 
+        @if($task->documents->count())
+    <div class="mb-6">
+        <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Attached Documents</label>
+        <ul class="list-disc list-inside text-blue-600 dark:text-blue-400">
+            @foreach($task->documents as $document)
+                <li>
+                    <a href="{{ asset('storage/' . $document->file_path) }}" target="_blank" class="underline">
+                        {{ basename($document->file_path) }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
+
 
         <div class="flex items-center space-x-4">
             <button type="submit"

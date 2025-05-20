@@ -16,68 +16,33 @@
 
 <div class="flex min-h-screen">
     <!-- Sidebar -->
-    <aside class="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
-        <a href="{{ url('/') }}" class="block text-2xl font-bold text-gray-800 dark:text-white mb-6">
-            Sysinn HRM
-        </a>
-
-        <nav class="space-y-2">
-            {{-- Show to authenticated employee --}}
-            @auth('employee')
-                <a href="{{ route('user-tasks.index') }}"
-                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    My Tasks
-                </a>
-
-                <span class="block text-gray-600 dark:text-gray-300">
-                    {{ Auth::guard('employee')->user()->first_name }}
-                </span>
-            @endauth
-
-            {{-- Show to authenticated admin or super admin --}}
-            @auth
-                @php
-                    $roleId = Auth::user()->role_id ?? null;
-                @endphp
-
-                @if($roleId === 1 || $roleId === 2)
-                    
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Dashboard
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Users
-                    </a>
-                    <a href="{{ route('employees.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Employees
-                    </a>
-                    <a href="{{ route('employee-daily-tasks.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Tasks
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                        Settings
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                         Profile
-                    </a>
-                    <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                         Attendance & Time Tracking
-                    </a>
-                @endif
-
-                <a href="{{ route('logout') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Logout
-                </a>
-            @endauth
-        </nav>
-    </aside>
+    @include('layouts.sidebar')
 
     <!-- Main content -->
     <main class="flex-1 p-6">
 
+    
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+
+
     <div class="flex justify-between items-center mb-6">
-        <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Employee Daily Tasks</h1>
+
+
+    <form method="GET" action="{{ route('employee-daily-tasks.index') }}" class="flex space-x-2">
+    <input type="text" name="search" value="{{ request('search') }}"
+           placeholder="Search by name or status"
+           class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-blue-300 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+    <button type="submit"
+            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+        Search
+    </button>
+</form>
+
+
+
+        <h1 class="text-2xl font-semibold text-gray-800 dark:text-white">Management Tasks List</h1>
         <a href="{{ route('employee-daily-tasks.create') }}"
            class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
             Add New Task
@@ -97,7 +62,6 @@
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">#</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Employee</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Date</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Description</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Created At</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
@@ -109,7 +73,6 @@
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->id }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->employee->first_name }} {{ $task->employee->last_name }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->task_date }}</td>
-                        <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->task_description }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ ucfirst($task->status) }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->created_at->format('d M Y, h:i A') }}</td>
                        <td class="px-6 py-4 space-x-2">

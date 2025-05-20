@@ -9,11 +9,6 @@
         background-color: blue !important;
     }
 </style>
-
-
-
-
-
 <div class="flex min-h-screen">
     @include('layouts.sidebar')
     <!-- Main content -->
@@ -31,7 +26,7 @@
         </div>
     @endif
 
-    <form action="{{ route('employee-daily-tasks.store') }}" method="POST" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form action="{{ route('employee-daily-tasks.store') }}" method="POST" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4" method="POST" enctype="multipart/form-data">
         @csrf
 
         <div class="mb-4">
@@ -86,6 +81,14 @@
                 <option value="completed">Completed</option>
             </select>
         </div>
+
+        <div class="mb-6">
+    <label for="related_documents" class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Related Documents</label>
+    <input type="file" name="related_documents[]" id="related_documents" multiple
+           class="w-full border border-gray-300 dark:border-gray-600 rounded px-3 py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white">
+    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">You can upload multiple documents (PDF, JPG, PNG, DOCX, etc.). Max size: 2MB each.</p>
+</div>
+
 
         <div class="flex items-center space-x-4">
             <button type="submit"
