@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Department;
+use App\Models\Role;
+use App\Models\User;
 class EmployeeController extends Controller
 {
     public function index(Request $request)
@@ -38,32 +40,56 @@ class EmployeeController extends Controller
        // return view('employees.create');
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|email|unique:employees,email',
-            'password' => 'required|string|min:6',
-            'phone' => 'nullable|string',
-            'position' => 'nullable|string',
-            'department_id' => 'nullable|exists:departments,id',
-            'salary' => 'nullable|numeric',
-            'hired_at' => 'nullable|date',
-            'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
-            // add any other fields you want to validate
-        ]);
-       if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('employees', 'public');
-            $validated['profile_picture'] = $path; // e.g., "employees/1726837162.jpg"
-        }
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'first_name' => 'required|string|max:255',
+        'last_name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email|unique:employees,email',
+        'password' => 'required|string|min:6',
+        'phone' => 'nullable|string',
+        'position' => 'nullable|string',
+        'department_id' => 'nullable|exists:departments,id',
+        'salary' => 'nullable|numeric',
+        'hired_at' => 'nullable|date',
+        'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+    ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+    // ✅ Handle file upload
+    if ($request->hasFile('profile_picture')) {
+        $path = $request->file('profile_picture')->store('employees', 'public');
+        $validated['profile_picture'] = $path;
+    }
 
-        Employee::create($validated);
+    // ✅ Hash password once
+    $hashedPassword = Hash::make($validated['password']);
 
-        return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
-     }
+    // ✅ Create user
+    $user = User::create([
+        'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+        'email' => $validated['email'],
+        'password' => $hashedPassword,
+        'role_id' => 9, // employee role
+    ]);
+
+    // ✅ Create employee with same credentials
+    Employee::create([
+        'first_name' => $validated['first_name'],
+        'last_name' => $validated['last_name'],
+        'email' => $validated['email'],
+        'password' => $hashedPassword,
+        'phone' => $validated['phone'] ?? null,
+        'position' => $validated['position'] ?? null,
+        'department_id' => $validated['department_id'] ?? null,
+        'salary' => $validated['salary'] ?? null,
+        'hired_at' => $validated['hired_at'] ?? null,
+        'profile_picture' => $validated['profile_picture'] ?? null,
+        'user_id' => $user->id,
+    ]);
+
+    return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
+}
+
 
     public function show(Employee $employee)
     {
@@ -72,9 +98,8 @@ class EmployeeController extends Controller
 
     public function edit(Employee $employee)
     {
-         $departments = Department::all(); // ✅ Fetch departments
-    return view('employees.edit', compact('employee', 'departments'));
-
+        $departments = Department::all(); // ✅ Fetch departments
+        return view('employees.edit', compact('employee', 'departments'));
         return view('employees.edit', compact('employee'));
     }
 
@@ -85,9 +110,7 @@ class EmployeeController extends Controller
             'last_name' => 'required',
             'email' => 'required|email|unique:employees,email,' . $employee->id,
         ]);
-
         $employee->update($validated);
-
         return redirect()->route('employees.index')->with('success', 'Employee updated!');
     }
 
@@ -96,6 +119,13 @@ class EmployeeController extends Controller
         $employee->delete();
         return redirect()->route('employees.index')->with('success', 'Employee deleted!');
     }
+
+
+        public function dashboard()
+        {
+            return view('employees.dashboard'); // Ensure this view exists
+        }
+
 
     
 }

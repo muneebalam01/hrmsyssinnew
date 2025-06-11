@@ -10,22 +10,43 @@ use App\http\Controllers\UserDashboardController;
 use App\Http\Controllers\EmployeeTaskCommentController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\RoleModuleController;
+
 Route::get('/', function () {
     return view('welcome');
 });
 Route::resource('departments', DepartmentController::class);
 
+// Route::middleware(function ($request, $next) {
+//     if (Auth::guard('employee')->check() || Auth::check()) {
+//         return $next($request);
+//     }
+//     return redirect('/userslogin');
+// })->group(function () {
+//     Route::get('/UserTasks', [UserTasksController::class, 'index'])->name('user-tasks.index');
+//     Route::get('/user-tasks/{id}', [UserTasksController::class, 'show'])->name('user.tasks.show');
+// });
+
+
+
+     Route::get('/login', function () {
+    return redirect('/userslogin');
+})->name('login');
+
+
+// Route to show tasks for user (role_id === 9)
 Route::get('/UserTasks', [UserTasksController::class, 'index'])
-     ->middleware('auth:employee')
+     ->middleware('auth')
      ->name('user-tasks.index');
 
-     Route::get('/user-tasks/{id}', [UserTasksController::class, 'show'])
-     ->middleware('auth:employee')
+Route::get('/user-tasks/{id}', [UserTasksController::class, 'show'])
+     ->middleware('auth')
      ->name('user.tasks.show');
 
-    Route::get('/login', function () {
-        return 'Login page not yet implemented.';
-    })->name('login');
+
+
+
 
 
 Route::resource('employees', \App\Http\Controllers\EmployeeController::class);
@@ -83,4 +104,29 @@ Route::get('/auth/dashboard', function () {
 Route::get('/auth/dashboard', [UserDashboardController::class, 'index'])->middleware('auth')->name('auth.dashboard');
 
 
+
+
 Route::post('/task-comments', [EmployeeTaskCommentController::class, 'store'])->name('task-comments.store');
+
+Route::middleware(['auth:employee'])->group(function () {
+    Route::view('/employee/dashboard', 'employee.dashboard')->name('employee.dashboard');
+});
+
+
+
+Route::get('/dashboard', function () {
+    if (auth()->check()) {
+        if (auth()->user()->role_id == 9) {
+            return redirect()->route('employee.dashboard');
+        } else {
+            return redirect()->route('auth.dashboard');
+        }
+    }
+    return redirect()->route('userslogin');
+})->middleware('auth')->name('dashboard');
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/role-modules/{role}/edit', [RoleModuleController::class, 'edit'])->name('role-modules.edit');
+    Route::put('/role-modules/{role}', [RoleModuleController::class, 'update'])->name('role-modules.update');
+});

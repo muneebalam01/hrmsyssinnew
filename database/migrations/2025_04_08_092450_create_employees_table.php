@@ -26,6 +26,10 @@ return new class extends Migration
             $table->decimal('salary', 10, 2)->nullable();
             $table->date('hired_at')->nullable();
             $table->string('profile_picture')->nullable();
+            $table->foreignId('user_id')
+            ->constrained('users')
+            ->onDelete('cascade'); 
+
             $table->timestamps();
         });
     }

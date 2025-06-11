@@ -5,39 +5,25 @@
         </a>
 
         <div class="flex items-center space-x-4">
-            {{-- Show to authenticated employee --}}
-            @auth('employee')
-                <a href="{{ route('user-tasks.index') }}"
-                   class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    My Tasks
-                </a>
-
-                <a href="#"
-                   class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    {{ Auth::guard('employee')->user()->first_name }}
-                </a>
-            @endauth
-
-            {{-- Show to authenticated admin or super admin --}}
             @auth
                 @php
                     $roleId = Auth::user()->role_id ?? null;
                 @endphp
 
-                @if($roleId === 1 || $roleId === 2)
+                {{-- Show "My Tasks" link only for role_id 9 (students/employees) --}}
+               
+                <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    {{ Auth::user()->name }}
+                </a>
 
-                    
-                    <a href="#" class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                       {{ Auth::user()->name }}
-                    </a>
-                @endif
-
-               <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                   class="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    Logout
+                </a>
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                     @csrf
                 </form>
-
             @endauth
         </div>
     </div>

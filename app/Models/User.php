@@ -21,7 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role_id',
+        // 'role_id',
     ];
 
     /**
@@ -39,21 +39,28 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
-    }
-    public function comments()
-{
-    return $this->morphMany(EmployeeTaskComment::class, 'commented_by');
-}
+        protected function casts(): array
+        {
+            return [
+                'email_verified_at' => 'datetime',
+                'password' => 'hashed',
+            ];
+        }
+        public function roles()
+        {
+            return $this->belongsToMany(Role::class, 'role_user');
+            // return $this->belongsTo(Role::class);
+        }
+       public function comments()
+        {
+            return $this->morphMany(EmployeeTaskComment::class, 'commented_by');
+        }
+
+        public function employee()
+        {
+            return $this->hasOne(Employee::class);
+        }
+
 
 }
 

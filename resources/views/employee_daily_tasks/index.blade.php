@@ -62,9 +62,10 @@
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">#</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Employee</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Date</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Subject</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Created At</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
+                    <!-- <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th> -->
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -73,9 +74,11 @@
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->id }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->employee->first_name }} {{ $task->employee->last_name }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->task_date }}</td>
+                        <td class="px-6 py-4 text-gray-900 dark:text-white">
+                            <a href="{{ route('employee-daily-tasks.show', $task) }}">{{ $task->task_subject }}</a></td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ ucfirst($task->status) }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->created_at->format('d M Y, h:i A') }}</td>
-                       <td class="px-6 py-4 space-x-2">
+                       <!-- <td class="px-6 py-4 space-x-2">
     <a href="{{ route('employee-daily-tasks.show', $task) }}"
        class="text-blue-600 hover:underline dark:text-blue-400">
         Show
@@ -85,17 +88,7 @@
        class="text-yellow-600 hover:underline dark:text-yellow-400">
         Edit
     </a>
-
-    <form action="{{ route('employee-daily-tasks.destroy', $task) }}" method="POST"
-          class="inline-block"
-          onsubmit="return confirm('Are you sure you want to delete this task?');">
-        @csrf @method('DELETE')
-        <button type="submit"
-                class="text-red-600 hover:underline dark:text-red-400">
-            Delete
-        </button>
-    </form>
-</td>
+</td> -->
 
                     </tr>
                 @empty

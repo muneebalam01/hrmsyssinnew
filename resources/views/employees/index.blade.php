@@ -49,26 +49,31 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Name</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Email</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Position</th>
+                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Department</th>
                         <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</th>
-                        <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
+                        <!-- <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th> -->
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($employees as $employee)
                         <tr>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
-                                {{ $employee->first_name }} {{ $employee->last_name }}
+                                <a href="{{ route('employees.show', $employee) }}">{{ $employee->first_name }} {{ $employee->last_name }}</a>
+                            </td>
+                            
+                            <td class="px-6 py-4 text-gray-900 dark:text-white">
+                                <a href="{{ route('employees.show', $employee) }}">{{ $employee->email }}</a>
                             </td>
                              <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 {{ $employee->position }}
                             </td>
-                            <td class="px-6 py-4 text-gray-900 dark:text-white">
-                                {{ $employee->email }}
-                            </td>
                              <td class="px-6 py-4 text-gray-900 dark:text-white">
+                                {{ $employee->department->name }}
+                            </td>
+                            <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 {{ $employee->hired_at }}
                             </td>
-                            <td class="px-6 py-4 space-x-2">
+                            <!-- <td class="px-6 py-4 space-x-2">
                                 <a href="{{ route('employees.show', $employee) }}"
                                    class="text-blue-600 hover:underline dark:text-blue-400">
                                     View
@@ -85,7 +90,7 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
                                         Delete
                                     </button>
                                 </form>
-                            </td>
+                            </td> -->
                         </tr>
                     @empty
                         <tr>

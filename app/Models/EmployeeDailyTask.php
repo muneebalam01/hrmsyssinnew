@@ -11,6 +11,7 @@ class EmployeeDailyTask extends Model
 
     protected $fillable = [
         'employee_id',
+        'user_id',
         'assigned_by',
         'task_date',
         'task_subject',

@@ -49,6 +49,10 @@ class EmployeeDailyTaskController extends Controller
         ]);
          $validated['assigned_by'] = auth()->id();
          //dd($validated);
+        $employee = Employee::with('user')->findOrFail($validated['employee_id']);
+        //dd($employee->user);
+        $validated['user_id'] = $employee->user->id ?? null;
+
         $task = EmployeeDailyTask::create($validated);
        if ($request->hasFile('related_documents')) {
         foreach ($request->file('related_documents') as $file) {

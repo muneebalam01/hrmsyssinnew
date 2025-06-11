@@ -40,21 +40,29 @@
                        required>
             </div>
 
-        <div class="mb-4">
-    <label for="role_id" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Role</label>
-    <select id="role_id" name="role_id"
-        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-300"
-        required>
-        <option value="">-- Select Role --</option>
+<div class="mb-4">
+    <label class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search Roles</label>
+    
+    <!-- Search Input -->
+    <input type="text" id="roleSearch"
+           placeholder="Type to search roles..."
+           class="w-full px-4 py-2 mb-3 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-300">
+    
+    <!-- Checkboxes List -->
+    <div id="rolesList" class="space-y-2 max-h-48 overflow-y-auto border p-3 rounded-md dark:border-gray-600 dark:bg-gray-800">
         @foreach($roles as $role)
-            <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
-                {{ ucfirst($role->name) }}
-            </option>
+            <label class="flex items-center role-item">
+                <input type="checkbox" name="role_id[]" value="{{ $role->id }}"
+                       {{ is_array(old('role_id')) && in_array($role->id, old('role_id')) ? 'checked' : '' }}
+                       class="form-checkbox text-blue-600 dark:bg-gray-700 dark:border-gray-600">
+                <span class="ml-2 text-gray-700 dark:text-gray-300">{{ ucfirst($role->name) }}</span>
+            </label>
         @endforeach
-    </select>
+    </div>
 
     @error('role_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
 </div>
+
 
             <div class="flex items-center justify-between mt-6">
                 <button type="submit"
@@ -69,3 +77,31 @@
         </form>
     </div>
 @endsection
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('roleSearch');
+        const roleItems = document.querySelectorAll('.role-item');
+
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.toLowerCase();
+
+            roleItems.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+    });
+</script>
+
+<style>
+    #rolesList::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    #rolesList::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 116, 139, 0.5); /* slate-500 */
+        border-radius: 4px;
+    }
+</style>

@@ -20,6 +20,7 @@ class Employee extends Authenticatable
         'salary',
         'hired_at',
         'profile_picture',
+        'user_id',
     ];
 
     protected $hidden = ['password'];
@@ -36,5 +37,11 @@ class Employee extends Authenticatable
 {
     return $this->morphMany(EmployeeTaskComment::class, 'commented_by');
 }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 
 }

@@ -53,6 +53,8 @@ class Kernel extends HttpKernel
 
         // You can add your custom middleware here
         'admin' => \App\Http\Middleware\AdminMiddleware::class,
+        'employee' => \App\Http\Middleware\EnsureEmployee::class,
+
         
     ];
 }

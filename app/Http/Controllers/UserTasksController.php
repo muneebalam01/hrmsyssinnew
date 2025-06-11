@@ -9,18 +9,19 @@ class UserTasksController extends Controller
     public function index()
     {
         
-        $employee = Auth::guard('employee')->user();
+       $user = Auth::user(); // using default 'web' guard
 
-        if (!$employee) {
-            return view('user_tasks.index', ['users_tasks' => []]);
+        if (!$user || $user->role_id !== 9) {
+            return redirect()->route('login')->with('error', 'Unauthorized access.');
         }
-    
+
         $users_tasks = EmployeeDailyTask::with('employee')
-                        ->where('employee_id', $employee->id)
-                        ->latest()
-                        ->get();
-    
+                            ->where('user_id', $user->id) // match logged-in user
+                            ->latest()
+                            ->get();
+
         return view('user_tasks.index', compact('users_tasks'));
+
 }
 
 

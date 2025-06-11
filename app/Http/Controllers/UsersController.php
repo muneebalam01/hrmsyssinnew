@@ -17,22 +17,28 @@ class UsersController extends Controller
         return view('auth.userslogin');
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-        ]);
+public function login(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => ['required', 'email'],
+        'password' => ['required'],
+    ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
-        }
+    if (Auth::attempt($credentials)) {
+        $request->session()->regenerate();
+        $user = auth()->user();
+        // Redirect based on role
+        if ($user->roles->contains('id', 9)) {
+                return redirect()->route('employee.dashboard');
+            }
 
-        return back()->withErrors([
-            'email' => 'Invalid credentials.',
-        ])->onlyInput('email');
+        return redirect()->route('auth.dashboard');
     }
+
+    return back()->withErrors([
+        'email' => 'Invalid credentials.',
+    ])->onlyInput('email');
+}
 
     public function showRegisterForm()
     {
@@ -49,16 +55,17 @@ class UsersController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|confirmed|min:6',
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => 'required|array',
+            'role_id.*' => 'exists:roles,id',
         ]);
 
         $user = User::create([
-           'name' => $data['name'],
+        'name' => $data['name'],
         'email' => $data['email'],
         'password' => Hash::make($data['password']),
-        'role_id' => $data['role_id'],
+        // 'role_id' => $data['role_id'],
         ]);
-
+        $user->roles()->sync($data['role_id']);
         Auth::login($user);
         return redirect('/auth/dashboard');
     }

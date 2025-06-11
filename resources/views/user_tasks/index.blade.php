@@ -10,6 +10,11 @@
     }
 </style>
 
+<div class="flex min-h-screen bg-gray-100 dark:bg-gray-900">
+    @include('layouts.sidebar')
+
+    <main class="flex-1 p-6">
+
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-semibold text-gray-800 dark:text-white"> @if(Auth::guard('employee')->check())
@@ -31,10 +36,10 @@
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">#</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Employee</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Date</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Description</th>
+                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Subject</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Status</th>
                     <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Created At</th>
-                    <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th>
+                    <!-- <th class="px-6 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-300">Actions</th> -->
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -43,10 +48,11 @@
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->id }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->employee->first_name }} {{ $task->employee->last_name }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->task_date }}</td>
-                        <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->task_description }}</td>
+                        <td class="px-6 py-4 text-gray-900 dark:text-white">
+                            <a href="{{ route('employee-daily-tasks.show', $task->id) }}">{{ $task->task_subject }}</a></td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ ucfirst($task->status) }}</td>
                         <td class="px-6 py-4 text-gray-900 dark:text-white">{{ $task->created_at->format('d M Y, h:i A') }}</td>
-                        <td class="px-6 py-4 space-x-2">
+                        <!-- <td class="px-6 py-4 space-x-2">
                             <a href="{{ route('employee-daily-tasks.edit', $task) }}"
                                class="text-yellow-600 hover:underline dark:text-yellow-400">
                                 Edit
@@ -55,7 +61,7 @@
                                class="text-yellow-600 hover:underline dark:text-yellow-400">
                                 View
                             </a>
-                        </td>
+                        </td> -->
                     </tr>
                 @empty
                     <tr>
@@ -67,5 +73,7 @@
             </tbody>
         </table>
     </div>
+</div>
+</main>
 </div>
 @endsection

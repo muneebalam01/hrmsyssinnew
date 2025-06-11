@@ -19,7 +19,7 @@
 <header class="w-full py-6 px-6 lg:px-12 flex justify-between items-center shadow-sm bg-white dark:bg-gray-800">
     <h1 class="text-xl font-bold">Syssin <span class="text-blue-600">HRM</span></h1>
     <nav class="space-x-4">
-        <a href="{{ route('employee.login') }}" class="px-4 py-2 rounded border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-sm">Employee login</a>
+        <!-- <a href="{{ route('employee.login') }}" class="px-4 py-2 rounded border border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white text-sm">Employee login</a> -->
 
         @if (Route::has('login'))
             @auth
