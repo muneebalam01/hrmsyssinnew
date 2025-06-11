@@ -36,7 +36,8 @@ class EmployeeController extends Controller
     public function create()
     {
           $departments = Department::all();
-    return view('employees.create', compact('departments'));
+          $roles = Role::all();
+    return view('employees.create', compact('departments', 'roles'));
        // return view('employees.create');
     }
 
@@ -71,6 +72,10 @@ class EmployeeController extends Controller
         'password' => $hashedPassword,
         'role_id' => 9, // employee role
     ]);
+
+    if ($request->has('role_id')) {
+    $user->roles()->sync($request->role_id);
+}
 
     // ✅ Create employee with same credentials
     Employee::create([

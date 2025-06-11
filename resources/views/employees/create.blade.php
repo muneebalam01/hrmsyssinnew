@@ -84,6 +84,31 @@
           @error('hired_at') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
         </div>
 
+
+        <div>
+  <label class="block text-sm font-medium text-gray-700">Search Roles</label>
+  
+  <!-- Search Input -->
+  <input type="text" id="roleSearch"
+         placeholder="Type to search roles..."
+         class="mt-1 block w-full px-4 py-2 mb-3 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500">
+
+  <!-- Checkboxes List -->
+  <div id="rolesList" class="space-y-2 max-h-48 overflow-y-auto border p-3 rounded-md">
+    @foreach($roles as $role)
+      <label class="flex items-center role-item">
+        <input type="checkbox" name="role_id[]" value="{{ $role->id }}"
+               {{ is_array(old('role_id')) && in_array($role->id, old('role_id')) ? 'checked' : '' }}
+               class="form-checkbox text-blue-600">
+        <span class="ml-2 text-gray-700">{{ ucfirst($role->name) }}</span>
+      </label>
+    @endforeach
+  </div>
+
+  @error('role_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+</div>
+
+
         <div>
           <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
           <input type="file" name="profile_picture" id="profile_picture" accept="image/*"
@@ -106,3 +131,21 @@
   </main>
 </div>
 @endsection
+
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('roleSearch');
+    const roleItems = document.querySelectorAll('.role-item');
+
+    searchInput.addEventListener('input', function () {
+      const query = searchInput.value.toLowerCase();
+
+      roleItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        item.style.display = text.includes(query) ? '' : 'none';
+      });
+    });
+  });
+</script>
