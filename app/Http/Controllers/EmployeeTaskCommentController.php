@@ -21,12 +21,15 @@ class EmployeeTaskCommentController extends Controller
 
  public function store(Request $request)
 {
+    
     // Your validation and logic
     $request->validate([
         'employee_daily_task_id' => 'required|exists:employee_daily_tasks,id',
         'comment' => 'required|string',
         'document' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:2048',
     ]);
+
+
 
     // $user = auth()->user(); // Ensure the user is authenticated
     // $employee = Auth::guard('employee')->user();
@@ -61,32 +64,35 @@ class EmployeeTaskCommentController extends Controller
 
 
 
-    if (Auth::guard('employee')->check()) {
-        $user = Auth::guard('employee')->user();
-    } elseif (Auth::check()) {
-        $user = Auth::user(); // default web guard
-    } else {
-        return redirect()->back()->with('error', 'Unauthorized');
-    }
+ if (Auth::guard('employee')->check()) {
+            $user = Auth::guard('employee')->user();
+        } elseif (Auth::check()) {
+            $user = Auth::user(); // default web guard (admin/superadmin)
+        } else {
+            return redirect()->back()->with('error', 'Unauthorized');
+        }
 
-    $commentData = [
-        'employee_daily_task_id' => $request->employee_daily_task_id,
-        'commented_by_id' => $user->id,
-        'commented_by_type' => get_class($user),
-        'comment' => $request->comment,
-    ];
+        $commentData = [
+            'employee_daily_task_id' => $request->employee_daily_task_id,
+            'commented_by_id' => $user->id,
+            'commented_by_type' => get_class($user),
+            'comment' => $request->comment,
+        ];
 
-    // Handle document upload if present
-    if ($request->hasFile('document')) {
-        $path = $request->file('document')->store('comment_documents', 'public');
-        $commentData['document_path'] = $path;
-    }
+        // Handle file upload
+        if ($request->hasFile('document') && $request->file('document')->isValid()) {
+            $path = $request->file('document')->store('comment_documents', 'public');
+            $commentData['document_path'] = $path;
 
-    EmployeeTaskComment::create($commentData);
+            // Optional: log path for debug
+            // logger()->info('Uploaded document path:', ['path' => $path]);
+        }
 
-    return redirect()
-        ->route('employee-daily-tasks.show', $request->employee_daily_task_id)
-        ->with('success', 'Comment posted successfully!');
-}
+        // Save the comment
+        EmployeeTaskComment::create($commentData);
+
+        return redirect()
+            ->route('employee-daily-tasks.show', $request->employee_daily_task_id)
+            ->with('success', 'Comment posted successfully!');}
 
 }

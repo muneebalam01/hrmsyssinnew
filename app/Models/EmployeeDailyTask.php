@@ -35,9 +35,15 @@ class EmployeeDailyTask extends Model
     }
 
     public function documents()
-{
-    return $this->hasMany(EmployeeTaskDocument::class);
-}
+        {
+            return $this->hasMany(EmployeeTaskDocument::class);
+        }
+
+     public function sharedDocuments()
+    {
+        return $this->hasMany(\App\Models\EmployeeTaskSharedDocument::class);
+    }
+
 
 
 }

@@ -14,6 +14,7 @@ class EmployeeTaskComment extends Model
         'commented_by_id',
         'commented_by_type',
         'comment',
+        'document_path'
     ];
 
     /**

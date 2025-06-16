@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoleModuleController;
-
+use App\Http\Controllers\AttendanceController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -31,8 +31,8 @@ Route::resource('departments', DepartmentController::class);
 
 
      Route::get('/login', function () {
-    return redirect('/userslogin');
-})->name('login');
+        return redirect('/userslogin');
+    })->name('login');
 
 
 // Route to show tasks for user (role_id === 9)
@@ -130,3 +130,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/role-modules/{role}/edit', [RoleModuleController::class, 'edit'])->name('role-modules.edit');
     Route::put('/role-modules/{role}', [RoleModuleController::class, 'update'])->name('role-modules.update');
 });
+
+Route::post('/tasks/{id}/share-documents', [EmployeeDailyTaskController::class, 'shareDocuments'])->name('employee-daily-tasks.share-documents');
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+    Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
+    Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+});
+    Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break');
