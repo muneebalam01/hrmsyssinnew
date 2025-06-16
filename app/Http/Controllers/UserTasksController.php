@@ -11,9 +11,9 @@ class UserTasksController extends Controller
         
        $user = Auth::user(); // using default 'web' guard
 
-        if (!$user || $user->role_id !== 9) {
-            return redirect()->route('login')->with('error', 'Unauthorized access.');
-        }
+        // if (!$user || $user->role_id !== 9) {
+        //     return redirect()->route('login')->with('error', 'Unauthorized access.');
+        // }
 
         $users_tasks = EmployeeDailyTask::with('employee')
                             ->where('user_id', $user->id) // match logged-in user
