@@ -1,4 +1,3 @@
-<!-- resources/views/layouts/sidebar.blade.php -->
 @php
     $menuItems = config('sidebar');
 @endphp
@@ -10,21 +9,19 @@
 
     <nav class="space-y-2">
 
-	@auth
-    <div class="text-gray-600 dark:text-gray-300 text-sm">
-        <strong>Roles:</strong>
-        <ul class="list-disc pl-5">
-            @forelse (Auth::user()->roles as $role)
-                <li>{{ $role->name }}</li>
-            @empty
-                <li>No role assigned</li>
-            @endforelse
-        </ul>
-    </div>
-@endauth
-
         @auth
-            <span class="block text-gray-600 dark:text-gray-300">
+            <div class="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                <strong>Roles:</strong>
+                <ul class="list-disc pl-5">
+                    @forelse (Auth::user()->roles as $role)
+                        <li>{{ $role->name }}</li>
+                    @empty
+                        <li>No role assigned</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <span class="block text-gray-600 dark:text-gray-300 font-medium mb-4">
                 {{ Auth::user()->name }}
             </span>
 
@@ -33,55 +30,72 @@
                 $roleId = $user->role_id ?? null;
             @endphp
 
+            {{-- Role-based static menu --}}
             @if ($user->id == 9)
                 <a href="{{ route('user-tasks.index') }}"
                    class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    My Tasks                </a>
-                 <a href="{{ route('attendance.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    My Tasks
+                </a>
+                <a href="{{ route('attendance.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     Attendance & Time Tracking
                 </a>
             @endif
 
             @if ($roleId === 1 || $roleId === 2)
-                <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                <a href="{{ route('auth.dashboard') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     Dashboard
                 </a>
+                <a href="{{ route('departments.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    Department
+                </a>
+                <a href="{{ route('employees.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    Employees
+                </a>
+                <a href="{{ route('employee-daily-tasks.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    Tasks
+                </a>
+                <a href="{{ route('attendance.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                    Attendance & Time Tracking
+                </a>
+
+                <a href="{{ route('payroll.index') }}"
+                   class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+                   Payroll
+                </a>
+
                 <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     Users
                 </a>
-                <a href="{{ route('employees.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Employees
-                </a>
-                <a href="{{ route('employee-daily-tasks.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Tasks
-                </a>
-                
                 <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     Settings
                 </a>
                 <a href="#" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
                     Profile
                 </a>
-                <a href="{{ route('departments.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Department
-                </a>
-                <a href="{{ route('attendance.index') }}" class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    Attendance & Time Tracking
-                </a>
             @endif
 
-            @foreach ($menuItems as $item)
-            @if (array_intersect(Auth::user()->roles->pluck('id')->toArray(), $item['roles']))
-                <a href="{{ $item['route'] === '#' ? '#' : route($item['route']) }}"
-                class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
-                    {{ $item['label'] }}
-                </a>
-            @endif
-            @endforeach
+            {{-- Dynamically loaded menu items from config/sidebar.php --}}
+        @foreach ($menuItems as $item)
+    @if (is_array($item) && isset($item['roles']) && array_intersect(Auth::user()->roles->pluck('id')->toArray(), $item['roles']))
+        <a href="{{ $item['route'] === '#' ? '#' : route($item['route']) }}"
+           class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+            {{ $item['label'] }}
+        </a>
+    @endif
+@endforeach
 
-            
+
+
+
+            {{-- Logout --}}
             <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-               class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white">
+               class="block text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white mt-6">
                 Logout
             </a>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

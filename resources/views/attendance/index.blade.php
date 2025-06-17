@@ -27,9 +27,9 @@
                 </h1>
 
                 <!-- Work Timer -->
-              <div class="text-lg font-semibold text-blue-700 dark:text-blue-300">
-    Work Duration: <span id="work-timer">00:00:00</span>
-</div>
+            <div class="text-lg font-semibold text-blue-700 dark:text-blue-300">
+                Work Duration: <span id="work-timer">00:00:00</span>
+            </div>
 
 
             </div>

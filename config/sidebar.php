@@ -29,11 +29,23 @@ return [
     [
         'label' => 'Attendance & Time Tracking',
         'route' => 'attendance.index',
-        'roles' => [1, 2],
+        'roles' => [1, 2 , 9],
     ],
     [
         'label' => 'Users',
         'route' => '#',
         'roles' => [1, 2],
     ],
+
+    [
+     'label' => 'Payroll',
+    'route' => 'payroll.index',
+    'roles' => [1, 2 , 3], 
+     ],
+        [
+        'label' => 'Announcements',
+        'route' => 'announcements.index',
+        'roles' => [1, 2 , 9], // Admin and Super Admin
+    ],
+
 ];

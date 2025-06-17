@@ -6,13 +6,15 @@ use App\Http\Controllers\EmployeeDailyTaskController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\UserTasksController;
 use App\Http\Controllers\UsersController;
-use App\http\Controllers\UserDashboardController;
+use App\Http\Controllers\UserDashboardController;
 use App\Http\Controllers\EmployeeTaskCommentController;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoleModuleController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\AnnouncementController;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -141,3 +143,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
 });
     Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break');
+use App\Http\Controllers\PayrollController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('payroll', PayrollController::class);
+});
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::resource('announcements', AnnouncementController::class);
+});
