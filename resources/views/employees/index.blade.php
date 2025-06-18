@@ -68,7 +68,7 @@ button.bg-blue-600.hover\:bg-blue-700.text-white.font-medium.py-2.px-4.rounded {
                                 {{ $employee->position }}
                             </td>
                              <td class="px-6 py-4 text-gray-900 dark:text-white">
-                                {{ $employee->department->name }}
+                              {{ $employee->department->name ?? 'N/A' }}
                             </td>
                             <td class="px-6 py-4 text-gray-900 dark:text-white">
                                 {{ $employee->hired_at }}

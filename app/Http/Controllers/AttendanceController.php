@@ -28,9 +28,10 @@ class AttendanceController extends Controller
 
 //     }
 
-    public function clockIn()
-    {
-        $today = now()->toDateString();
+   public function clockIn()
+{
+    $today = now()->toDateString();
+
     $attendance = Attendance::firstOrCreate(
         ['user_id' => Auth::id(), 'date' => $today]
     );
@@ -40,21 +41,26 @@ class AttendanceController extends Controller
         $attendance->save();
     }
 
+    session(['clockInTime' => $attendance->clock_in->toIso8601String()]);
+
     return back()->with('success', 'Clocked in successfully');
+}
+
+
+public function clockOut()
+{
+    $today = now()->toDateString();
+    $attendance = Attendance::where('user_id', Auth::id())->where('date', $today)->first();
+
+    if ($attendance && !$attendance->clock_out) {
+        $attendance->update(['clock_out' => now()]);
+        session()->forget('clockInTime');
+        return back()->with('success', 'Clocked out successfully');
     }
 
-    public function clockOut()
-    {
-        $today = now()->toDateString();
-        $attendance = Attendance::where('user_id', Auth::id())->where('date', $today)->first();
+    return back()->with('error', 'Clock out failed or already done');
+}
 
-        if ($attendance && !$attendance->clock_out) {
-            $attendance->update(['clock_out' => now()]);
-            return back()->with('success', 'Clocked out successfully');
-        }
-
-        return back()->with('error', 'Clock out failed or already done');
-    }
 
 
 public function break(Request $request)
@@ -90,30 +96,23 @@ public function break(Request $request)
         return back()->with('success', 'Break started.');
     }
 }
+
+// In your controller
 public function index()
 {
-    $userId = auth()->id();
-    $today = \Carbon\Carbon::today()->toDateString();
+    $user = auth()->user();
+    $isClockedIn = $user->attendances()->whereNull('clock_out')->exists();
+    $isClockedOut = !$isClockedIn;
 
-    // Get today's latest attendance record
-    $latestAttendance = Attendance::where('user_id', $userId)
-        ->whereDate('date', $today)
-        ->latest()
-        ->with('breaks')
-        ->first();
+    $latestAttendance = $user->attendances()->latest()->first();
 
-    $isClockedIn = $latestAttendance && $latestAttendance->clock_in;
-    $isClockedOut = $latestAttendance && $latestAttendance->clock_out;
+    $clockInTime = session('clockInTime') ?? ($isClockedIn ? optional($latestAttendance->clock_in)->toIso8601String() : null);
 
     return view('attendance.index', [
-        'attendances' => Attendance::with('breaks')
-            ->where('user_id', $userId)
-            ->orderByDesc('date')
-            ->paginate(10),
-        'clockInTime' => $latestAttendance?->clock_in,
-        'onBreak' => session('onBreak', false),
         'isClockedIn' => $isClockedIn,
         'isClockedOut' => $isClockedOut,
+        'clockInTime' => $clockInTime,
+        'attendances' => $user->attendances()->orderBy('date', 'desc')->with('breaks')->paginate(10),
     ]);
 }
 

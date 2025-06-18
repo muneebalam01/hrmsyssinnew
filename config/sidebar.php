@@ -29,7 +29,7 @@ return [
     [
         'label' => 'Attendance & Time Tracking',
         'route' => 'attendance.index',
-        'roles' => [1, 2],
+        'roles' => [1, 2,9],
     ],
     [
         'label' => 'Users',
