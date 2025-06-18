@@ -30,14 +30,6 @@ class AttendanceController extends Controller
 
     public function clockIn()
     {
-        // $today = now()->toDateString();
-        // $attendance = Attendance::firstOrCreate(
-        //     ['user_id' => Auth::id(), 'date' => $today],
-        //     ['clock_in' => now()]
-        // );
-
-        // return back()->with('success', 'Clocked in successfully');
-
         $today = now()->toDateString();
     $attendance = Attendance::firstOrCreate(
         ['user_id' => Auth::id(), 'date' => $today]

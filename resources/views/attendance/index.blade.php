@@ -110,6 +110,7 @@
 <script>
     const clockInTime = @json($clockInTime);
     const onBreak = @json(session('onBreak'));
+    const isClockedOut = @json($isClockedOut);
     let timerInterval = null;
     let elapsed = 0;
 
@@ -138,7 +139,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        if (clockInTime) {
+        if (clockInTime && !isClockedOut) {
             const clockIn = new Date(clockInTime);
             const now = new Date();
             const secondsElapsed = Math.floor((now - clockIn) / 1000);
@@ -148,7 +149,12 @@
                 document.getElementById('work-timer').textContent = formatTime(secondsElapsed);
                 pauseTimer();
             }
+        } else {
+            // Either not clocked in or already clocked out
+            pauseTimer();
+            document.getElementById('work-timer').textContent = "00:00:00";
         }
     });
 </script>
+
 @endsection
