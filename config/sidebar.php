@@ -33,7 +33,7 @@ return [
     ],
     [
         'label' => 'Users',
-        'route' => '#',
+        'route' => 'users.index',
         'roles' => [1, 2],
     ],
 ];
