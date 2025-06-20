@@ -13,6 +13,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\RoleModuleController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\UserController;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -154,3 +155,17 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+Route::get('/users', [UserController::class, 'index'])
+    ->name('users.index')
+    ->middleware('auth');
+
+
+// Profile image routes
+Route::post('/users/{user}/profile-image', [UserController::class, 'updateProfileImage'])
+    ->name('users.update-profile-image')
+    ->middleware('auth');
+
+Route::delete('/users/{user}/profile-image', [UserController::class, 'removeProfileImage'])
+    ->name('users.remove-profile-image')
+    ->middleware('auth');

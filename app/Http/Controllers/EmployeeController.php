@@ -41,7 +41,61 @@ class EmployeeController extends Controller
        // return view('employees.create');
     }
 
-   public function store(Request $request)
+//    public function store(Request $request)
+// {
+//     $validated = $request->validate([
+//         'first_name' => 'required|string|max:255',
+//         'last_name' => 'required|string|max:255',
+//         'email' => 'required|email|unique:users,email|unique:employees,email',
+//         'password' => 'required|string|min:6',
+//         'phone' => 'nullable|string',
+//         'position' => 'nullable|string',
+//         'department_id' => 'nullable|exists:departments,id',
+//         'salary' => 'nullable|numeric',
+//         'hired_at' => 'nullable|date',
+//         'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+//     ]);
+
+//     // ✅ Handle file upload
+//     if ($request->hasFile('profile_picture')) {
+//         $path = $request->file('profile_picture')->store('employees', 'public');
+//         $validated['profile_picture'] = $path;
+//     }
+
+//     // ✅ Hash password once
+//     $hashedPassword = Hash::make($validated['password']);
+
+//     // ✅ Create user
+//     $user = User::create([
+//         'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+//         'email' => $validated['email'],
+//         'password' => $hashedPassword,
+//         'role_id' => 9, // employee role
+//     ]);
+
+//     if ($request->has('role_id')) {
+//     $user->roles()->sync($request->role_id);
+// }
+
+//     // ✅ Create employee with same credentials
+//     Employee::create([
+//         'first_name' => $validated['first_name'],
+//         'last_name' => $validated['last_name'],
+//         'email' => $validated['email'],
+//         'password' => $hashedPassword,
+//         'phone' => $validated['phone'] ?? null,
+//         'position' => $validated['position'] ?? null,
+//         'department_id' => $validated['department_id'] ?? null,
+//         'salary' => $validated['salary'] ?? null,
+//         'hired_at' => $validated['hired_at'] ?? null,
+//         'profile_picture' => $validated['profile_picture'] ?? null,
+//         'user_id' => $user->id,
+//     ]);
+
+//     return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
+// }
+
+public function store(Request $request)
 {
     $validated = $request->validate([
         'first_name' => 'required|string|max:255',
@@ -56,28 +110,31 @@ class EmployeeController extends Controller
         'profile_picture' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
     ]);
 
-    // ✅ Handle file upload
+    // ✅ Upload image if available
+    $path = null;
     if ($request->hasFile('profile_picture')) {
         $path = $request->file('profile_picture')->store('employees', 'public');
-        $validated['profile_picture'] = $path;
     }
 
-    // ✅ Hash password once
+    // ✅ Hash password
     $hashedPassword = Hash::make($validated['password']);
 
-    // ✅ Create user
-    $user = User::create([
-        'name' => $validated['first_name'] . ' ' . $validated['last_name'],
-        'email' => $validated['email'],
-        'password' => $hashedPassword,
-        'role_id' => 9, // employee role
-    ]);
+    // ✅ Create the user — MAKE SURE this includes 'profile_picture' => $path
+   $user = User::create([
+    'name' => $validated['first_name'] . ' ' . $validated['last_name'],
+    'email' => $validated['email'],
+    'password' => Hash::make($validated['password']),
+    'role_id' => 9,
+    'profile_picture' => $path ?? null, // ✅ this saves the image path
+]);
 
+
+    // Optional: assign roles if you use Spatie
     if ($request->has('role_id')) {
-    $user->roles()->sync($request->role_id);
-}
+        $user->roles()->sync($request->role_id);
+    }
 
-    // ✅ Create employee with same credentials
+    // ✅ Create the employee
     Employee::create([
         'first_name' => $validated['first_name'],
         'last_name' => $validated['last_name'],
@@ -88,12 +145,13 @@ class EmployeeController extends Controller
         'department_id' => $validated['department_id'] ?? null,
         'salary' => $validated['salary'] ?? null,
         'hired_at' => $validated['hired_at'] ?? null,
-        'profile_picture' => $validated['profile_picture'] ?? null,
+        'profile_picture' => $path,
         'user_id' => $user->id,
     ]);
 
     return redirect()->route('employees.index')->with('success', 'Employee created successfully.');
 }
+
 
 
     public function show(Employee $employee)

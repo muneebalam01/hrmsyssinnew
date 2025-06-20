@@ -15,8 +15,12 @@
                 <div class="relative inline-block text-left" x-data="{ open: false }">
     <!-- Profile Button -->
     <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-        <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}"
-     alt="Pic" class="w-10 h-10 rounded-full border border-gray-300 object">
+        <!-- <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}" class="w-10 h-10 rounded-full border border-gray-300 object"> -->
+         <img src="{{ Auth::user()->profile_picture 
+    ? asset('storage/' . Auth::user()->profile_picture) 
+    : asset('images/default-avatar.png') }}" 
+     alt="Profile" 
+     class="w-10 h-10 rounded-full border border-gray-300 object"class="w-10 h-10 rounded-full">
         <svg class="w-5 h-5 text-gray-600 dark:text-white" fill="none" stroke="currentColor" stroke-width="2"
              viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round"

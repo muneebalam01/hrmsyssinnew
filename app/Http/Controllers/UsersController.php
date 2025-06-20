@@ -87,4 +87,5 @@ public function login(Request $request)
         $request->session()->regenerateToken();
         return redirect('/userslogin');
     }
+
 }
