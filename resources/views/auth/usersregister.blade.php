@@ -4,7 +4,7 @@
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-6">User Registration</h2>
 
-        <form method="POST" action="{{ url('/usersregister') }}" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <form method="POST" action="{{ url('/usersregister') }}" enctype="multipart/form-data" class="bg-white dark:bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4">
             @csrf
 
             <div class="mb-4">
@@ -39,6 +39,15 @@
                        class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-300"
                        required>
             </div>
+
+            <div class="mb-4">
+    <label for="profile_picture" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Profile Picture</label>
+    <input type="file" id="profile_picture" name="profile_picture"
+           class="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:text-white dark:border-gray-600 focus:outline-none focus:ring focus:border-blue-300">
+    @error('profile_picture') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+</div>
+
+
 
 <div class="mb-4">
     <label class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Search Roles</label>

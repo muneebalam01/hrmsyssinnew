@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Attendance;
+use App\Models\BreakTime;
 
 class AdminAuthController extends Controller
 {
@@ -51,4 +53,29 @@ class AdminAuthController extends Controller
         Auth::logout();
         return redirect('/admin/login');
     }
+
+
+    public function breakToggle()
+{
+    $attendance = Attendance::where('user_id', auth()->id())
+        ->whereDate('date', now())
+        ->latest()
+        ->first();
+
+    if (!$attendance) {
+        return back()->with('error', 'You must clock in first.');
+    }
+
+    $openBreak = $attendance->breaks()->whereNull('break_end')->latest()->first();
+
+    if ($openBreak) {
+        // End the break
+        $openBreak->update(['break_end' => now()]);
+        return back()->with('success', 'Break ended.');
+    } else {
+        // Start a new break
+        $attendance->breaks()->create(['break_start' => now()]);
+        return back()->with('success', 'Break started.');
+    }
+}
 }

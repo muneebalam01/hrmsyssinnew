@@ -137,19 +137,22 @@ Route::post('/tasks/{id}/share-documents', [EmployeeDailyTaskController::class, 
 
 
 
+// Route::middleware(['auth'])->group(function () {
+//     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+//     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
+//     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+// });
+//     Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
     Route::post('/attendance/clock-in', [AttendanceController::class, 'clockIn'])->name('attendance.clock-in');
     Route::post('/attendance/clock-out', [AttendanceController::class, 'clockOut'])->name('attendance.clock-out');
+    Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break'); // ✅ fix here
 });
     Route::post('/attendance/break', [AttendanceController::class, 'break'])->name('attendance.break');
-use App\Http\Controllers\PayrollController;
 
 Route::middleware(['auth'])->group(function () {
-    Route::resource('payroll', PayrollController::class);
-});
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::resource('announcements', AnnouncementController::class);
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
