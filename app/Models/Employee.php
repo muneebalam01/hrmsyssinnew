@@ -45,6 +45,9 @@ class Employee extends Authenticatable
     {
         return $this->hasMany(EmployeeDocument::class);
     }
-
+    public function performances()
+    {
+        return $this->hasMany(Performance::class);
+    }
 
 }
